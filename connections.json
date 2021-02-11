@@ -1,0 +1,43 @@
+{
+  "serviceProviderConnections": {
+    "serviceBus": {
+      "parameterValues": {
+        "connectionString": "@appsetting('serviceBus-connectionString')"
+      },
+      "serviceProvider": {
+        "id": "/serviceProviders/serviceBus"
+      },
+      "displayName": "ServiceBusCon"
+    }
+  },
+  "managedApiConnections": {
+    "azureeventgrid": {
+      "api": {
+        "id": "/subscriptions/5300330d-c553-41aa-b2da-95b0512e0741/providers/Microsoft.Web/locations/westeurope/managedApis/azureeventgrid"
+      },
+      "connection": {
+        "id": "/subscriptions/5300330d-c553-41aa-b2da-95b0512e0741/resourceGroups/Ny-privat-sup-resursgrupp/providers/Microsoft.Web/connections/azureeventgrid"
+      },
+      "connectionRuntimeUrl": "https://9b302be26e1f21d0.17.common.logic-westeurope.azure-apihub.net/apim/azureeventgrid/58deb74319d94c2ba4d47d4e74e011d0/",
+      "authentication": {
+        "type": "Raw",
+        "scheme": "Key",
+        "parameter": "@appsetting('azureeventgrid-connectionKey')"
+      }
+    },
+    "servicebus_1": {
+      "api": {
+        "id": "/subscriptions/5300330d-c553-41aa-b2da-95b0512e0741/providers/Microsoft.Web/locations/westeurope/managedApis/servicebus"
+      },
+      "connection": {
+        "id": "/subscriptions/5300330d-c553-41aa-b2da-95b0512e0741/resourceGroups/Ny-privat-sup-resursgrupp/providers/Microsoft.Web/connections/servicebus"
+      },
+      "connectionRuntimeUrl": "https://9b302be26e1f21d0.17.common.logic-westeurope.azure-apihub.net/apim/servicebus/7bd1f0b63a5548c3bee71ed81eb341a2/",
+      "authentication": {
+        "type": "Raw",
+        "scheme": "Key",
+        "parameter": "@appsetting('servicebus_1-connectionKey')"
+      }
+    }
+  }
+}

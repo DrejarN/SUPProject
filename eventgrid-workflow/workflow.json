@@ -1,0 +1,85 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Get_messages_from_a_topic_subscription_(peek-lock)": {
+                "type": "ApiConnection",
+                "inputs": {
+                    "host": {
+                        "connection": {
+                            "referenceName": "servicebus_1"
+                        }
+                    },
+                    "method": "get",
+                    "path": "/@{encodeURIComponent(encodeURIComponent('orebro-temperature-topic'))}/subscriptions/@{encodeURIComponent('subscriptiondemo')}/messages/batch/peek",
+                    "queries": {
+                        "maxMessageCount": 20,
+                        "subscriptionType": "Main",
+                        "sessionId": ""
+                    }
+                },
+                "runAfter": {}
+            },
+            "For_each": {
+                "type": "Foreach",
+                "foreach": "@body('Get_messages_from_a_topic_subscription_(peek-lock)')",
+                "actions": {
+                    "Complete_the_message_in_a_topic_subscription": {
+                        "type": "ApiConnection",
+                        "inputs": {
+                            "host": {
+                                "connection": {
+                                    "referenceName": "servicebus_1"
+                                }
+                            },
+                            "method": "delete",
+                            "path": "/@{encodeURIComponent(encodeURIComponent('orebro-temperature-topic'))}/subscriptions/@{encodeURIComponent('subscriptiondemo')}/messages/complete",
+                            "queries": {
+                                "lockToken": "@items('For_each')?['LockToken']",
+                                "subscriptionType": "Main",
+                                "sessionId": ""
+                            }
+                        },
+                        "runAfter": {}
+                    }
+                },
+                "runAfter": {
+                    "Get_messages_from_a_topic_subscription_(peek-lock)": [
+                        "Succeeded"
+                    ]
+                }
+            }
+        },
+        "triggers": {
+            "When_a_resource_event_occurs": {
+                "type": "ApiConnectionWebhook",
+                "inputs": {
+                    "host": {
+                        "connection": {
+                            "referenceName": "azureeventgrid"
+                        }
+                    },
+                    "body": {
+                        "properties": {
+                            "topic": "/subscriptions/5300330d-c553-41aa-b2da-95b0512e0741/resourceGroups/Ny-privat-sup-resursgrupp/providers/Microsoft.ServiceBus/namespaces/Ny-privat-sup-bus",
+                            "destination": {
+                                "endpointType": "webhook",
+                                "properties": {
+                                    "endpointUrl": "@{listCallbackUrl()}"
+                                }
+                            }
+                        }
+                    },
+                    "path": "/subscriptions/@{encodeURIComponent('5300330d-c553-41aa-b2da-95b0512e0741')}/providers/@{encodeURIComponent('Microsoft.ServiceBus.Namespaces')}/resource/eventSubscriptions",
+                    "queries": {
+                        "x-ms-api-version": "2017-09-15-preview"
+                    }
+                },
+                "splitOn": "@triggerBody()"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {}
+    },
+    "kind": "Stateful"
+}
